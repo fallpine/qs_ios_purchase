@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
@@ -25,7 +26,10 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   }
 
   /// 初始化
-  Future<void> initialize({required Function(bool isVip) onVipChange}) {
+  Future<void> initialize({
+    required Function(bool isVip) onVipChange,
+    required VoidCallback onCancelFreeTrialChange,
+  }) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
@@ -42,5 +46,10 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   /// 恢复购买
   Future<QsPurchaseResult> restorePurchase() {
     throw UnimplementedError('restorePurchase() has not been implemented.');
+  }
+
+  /// 校验交易订单
+  Future<QsPurchaseResult> checkTransactions() async {
+    throw UnimplementedError('checkTransactions() has not been implemented.');
   }
 }

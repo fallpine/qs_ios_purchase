@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:qs_ios_purchase/qs_cancel_free_trial_stream.dart';
 import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 import 'package:qs_ios_purchase/qs_vip_stream.dart';
@@ -14,10 +15,19 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
 
   /// 初始化
   @override
-  Future<void> initialize({required Function(bool isVip) onVipChange}) async {
+  Future<void> initialize({
+    required Function(bool isVip) onVipChange,
+    required VoidCallback onCancelFreeTrialChange,
+  }) async {
     QsVipStream.vipStream.listen((event) {
       if (event is bool) {
         onVipChange(event);
+      }
+    });
+
+    QsCancelFreeTrialStream.cancelFreeTrialStream.listen((event) {
+      if (event is bool) {
+        onCancelFreeTrialChange();
       }
     });
 
@@ -76,6 +86,27 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
   @override
   Future<QsPurchaseResult> restorePurchase() async {
     var result = await _invokeNativeMethod("restorePurchase");
+    if (result != null) {
+      if (result is Map<Object?, Object?>) {
+        final QsPurchaseResult purchaseResult = QsPurchaseResult.fromJson(
+          _convertObjectMapToMapStringDynamic(result),
+        );
+        return purchaseResult;
+      }
+    }
+
+    return QsPurchaseResult(
+      status: QsPurchaseStatus.error,
+      errorMessage: "未知错误",
+      originalPurchaseId: null,
+      originalSubscriptionDate: null,
+    );
+  }
+
+  /// 校验交易订单
+  @override
+  Future<QsPurchaseResult> checkTransactions() async {
+    var result = await _invokeNativeMethod("checkTransactions");
     if (result != null) {
       if (result is Map<Object?, Object?>) {
         final QsPurchaseResult purchaseResult = QsPurchaseResult.fromJson(

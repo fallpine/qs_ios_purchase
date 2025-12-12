@@ -8,7 +8,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "qs_ios_purchase", binaryMessenger: registrar.messenger())
 
     // 注册IAP流
-    QSInAppPurchaseVipStream.register(messenger: registrar.messenger())
+    QSVipStream.register(messenger: registrar.messenger())
+    QSCancelFreeTrialStream.register(messenger: registrar.messenger())
 
     let instance = QsIosPurchasePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -45,6 +46,11 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         result(dict)
       }
 
+    case "checkTransactions":
+      checkTransactions { dict in
+        result(dict)
+      }
+
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -57,7 +63,11 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await MainActor.run {
         QSPurchase.shared.vipAction = { isVip in
-          QSInAppPurchaseVipStream.vipStream?(isVip)
+          QSVipStream.vipStream?(isVip)
+        }
+
+        QSPurchase.shared.cancelFreeTrialAction = {
+          QSCancelFreeTrialStream.cancelFreeTrialStream?(true)
         }
       }
     }
@@ -135,13 +145,31 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           "status": "success",
         ]
         onCompletion(dict)
-      } onFailure: {
+      } onFailure: { error in
+        let dict = [
+          "status": "error",
+          "errorMessage": error,
+        ]
+        onCompletion(dict)
+      }
+    }
+  }
+
+  /// 校验交易订单
+  public func checkTransactions(onCompletion: @escaping ([String: Any]) -> Void) {
+    Task {
+      await QSPurchase.shared.checkTransactions(onSuccess: {
+        let dict = [
+          "status": "success",
+        ]
+        onCompletion(dict)
+      }, onFailure: {
         let dict = [
           "status": "error",
           "errorMessage": "没有有效的商品",
         ]
         onCompletion(dict)
-      }
+      })
     }
   }
 

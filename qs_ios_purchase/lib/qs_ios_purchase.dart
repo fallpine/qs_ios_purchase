@@ -1,11 +1,18 @@
+import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
 import 'qs_ios_purchase_platform_interface.dart';
 
 class QsIosPurchase {
   /// 初始化
-  static Future<void> initialize({required Function(bool isVip) onVipChange}) {
-    return QsIosPurchasePlatform.instance.initialize(onVipChange: onVipChange);
+  static Future<void> initialize({
+    required Function(bool isVip) onVipChange,
+    required VoidCallback onCancelFreeTrialChange,
+  }) {
+    return QsIosPurchasePlatform.instance.initialize(
+      onVipChange: onVipChange,
+      onCancelFreeTrialChange: onCancelFreeTrialChange,
+    );
   }
 
   /// 获取商品
@@ -21,5 +28,10 @@ class QsIosPurchase {
   /// 恢复购买
   static Future<QsPurchaseResult> restorePurchase() {
     return QsIosPurchasePlatform.instance.restorePurchase();
+  }
+
+  /// 校验交易订单
+  static Future<QsPurchaseResult> checkTransactions() async {
+    return await QsIosPurchasePlatform.instance.checkTransactions();
   }
 }
