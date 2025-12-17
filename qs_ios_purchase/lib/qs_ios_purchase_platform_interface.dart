@@ -25,6 +25,7 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Func
   /// 初始化
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
@@ -52,4 +53,7 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   Future<QsPurchaseResult> checkTransactions() async {
     throw UnimplementedError('checkTransactions() has not been implemented.');
   }
+
+  /// Property
+  String cancelProductId = "";
 }

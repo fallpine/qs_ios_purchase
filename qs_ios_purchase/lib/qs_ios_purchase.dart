@@ -4,6 +4,7 @@ import 'package:qs_ios_purchase/qs_purchase_result.dart';
 import 'qs_ios_purchase_platform_interface.dart';
 
 class QsIosPurchase {
+  /// Func
   /// 初始化
   static Future<void> initialize({
     required Function(bool isVip) onVipChange,
@@ -31,7 +32,11 @@ class QsIosPurchase {
   }
 
   /// 校验交易订单
-  static Future<QsPurchaseResult> checkTransactions() async {
+  static Future<QsPurchaseResult?> checkTransactions() async {
     return await QsIosPurchasePlatform.instance.checkTransactions();
   }
+
+  /// Property
+  static String get cancelProductId =>
+      QsIosPurchasePlatform.instance.cancelProductId;
 }

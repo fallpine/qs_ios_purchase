@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_cancel_free_trial_stream.dart';
+import 'package:qs_ios_purchase/qs_cancel_product_id_stream.dart';
 import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 import 'package:qs_ios_purchase/qs_vip_stream.dart';
@@ -28,6 +29,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     QsCancelFreeTrialStream.cancelFreeTrialStream.listen((event) {
       if (event is bool) {
         onCancelFreeTrialChange();
+      }
+    });
+
+    QsCancelProductIdStream.cancelProductIdStream.listen((event) {
+      if (event is String) {
+        cancelProductId = event;
       }
     });
 

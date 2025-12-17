@@ -40,6 +40,9 @@ class MockQsIosPurchasePlatform
     // TODO: implement checkTransactions
     throw UnimplementedError();
   }
+
+  @override
+  String cancelProductId = "";
 }
 
 void main() {

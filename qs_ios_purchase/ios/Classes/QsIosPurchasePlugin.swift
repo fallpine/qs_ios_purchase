@@ -7,9 +7,10 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "qs_ios_purchase", binaryMessenger: registrar.messenger())
 
-    // 注册IAP流
+    // 注册流
     QSVipStream.register(messenger: registrar.messenger())
     QSCancelFreeTrialStream.register(messenger: registrar.messenger())
+    QSCancelProductIdStream.register(messenger: registrar.messenger())
 
     let instance = QsIosPurchasePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -64,6 +65,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await MainActor.run {
         QSPurchase.shared.vipAction = { isVip in
           QSVipStream.vipStream?(isVip)
+          QSCancelProductIdStream.cancelProductIdStream?(QSPurchase.shared.cancelProductId)
         }
 
         QSPurchase.shared.cancelFreeTrialAction = {
