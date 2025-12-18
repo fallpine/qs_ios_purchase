@@ -94,6 +94,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
             "trialPeriodUnit": getPeriodUnitValue(unit: product.trialPeriodUnit) ?? "",
             "subscriptionPeriodValue": product.subscriptionPeriodValue,
             "subscriptionPeriodUnit": getPeriodUnitValue(unit: product.subscriptionPeriodUnit) ?? "",
+            "languageCode": product.priceFormatStyle.locale.languageCode,
+            "regionCode": product.priceFormatStyle.locale.regionCode
           ]
           dictArr.append(dict)
         }

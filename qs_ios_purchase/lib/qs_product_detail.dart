@@ -9,6 +9,8 @@ class QsProductDetail {
     required this.trialPeriodUnit,
     required this.subscriptionPeriodValue,
     required this.subscriptionPeriodUnit,
+    required this.languageCode,
+    required this.regionCode,
   });
   late final String id;
   late final QsProductType? productType;
@@ -19,6 +21,8 @@ class QsProductDetail {
   late final QsPeriodUnit? trialPeriodUnit;
   late final int? subscriptionPeriodValue;
   late final QsPeriodUnit? subscriptionPeriodUnit;
+  late final String? languageCode;
+  late final String? regionCode;
 
   QsProductDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -34,6 +38,8 @@ class QsProductDetail {
     discountCurrencyPrice = json['discountCurrencyPrice'];
     discountRate = json['discountRate'];
     trialPeriodValue = json['trialPeriodValue'];
+    languageCode = json['languageCode'];
+    regionCode = json['regionCode'];
 
     try {
       trialPeriodUnit = QsPeriodUnit.values.firstWhere(
@@ -65,6 +71,8 @@ class QsProductDetail {
     data['trialPeriodUnit'] = trialPeriodUnit?.name;
     data['subscriptionPeriodValue'] = subscriptionPeriodValue;
     data['subscriptionPeriodUnit'] = subscriptionPeriodUnit?.name;
+    data['languageCode'] = languageCode;
+    data['regionCode'] = regionCode;
     return data;
   }
 }
