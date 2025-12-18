@@ -2,7 +2,9 @@ class QsProductDetail {
   QsProductDetail({
     required this.id,
     required this.productType,
+    required this.price,
     required this.currencyPrice,
+    required this.discountPrice,
     required this.discountCurrencyPrice,
     required this.discountRate,
     required this.trialPeriodValue,
@@ -15,7 +17,9 @@ class QsProductDetail {
   });
   late final String id;
   late final QsProductType? productType;
+  late final double? price;
   late final String? currencyPrice;
+  late final double? discountPrice;
   late final String? discountCurrencyPrice;
   late final int? discountRate;
   late final int? trialPeriodValue;
@@ -36,7 +40,9 @@ class QsProductDetail {
       productType = null;
     }
 
+    price = json['price'];
     currencyPrice = json['currencyPrice'];
+    discountPrice = json['discountPrice'];
     discountCurrencyPrice = json['discountCurrencyPrice'];
     discountRate = json['discountRate'];
     trialPeriodValue = json['trialPeriodValue'];
@@ -67,7 +73,9 @@ class QsProductDetail {
     final data = <String, dynamic>{};
     data['id'] = id;
     data['productType'] = productType?.name;
+    data['price'] = price;
     data['currencyPrice'] = currencyPrice;
+    data['discountPrice'] = discountPrice;
     data['discountCurrencyPrice'] = discountCurrencyPrice;
     data['discountRate'] = discountRate;
     data['trialPeriodValue'] = trialPeriodValue;

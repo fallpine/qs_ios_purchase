@@ -87,7 +87,9 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           let dict = [
             "id": product.id,
             "productType": getProductTypeValue(type: product.type),
+            "price": product.price,
             "currencyPrice": product.currencyPrice,
+            "discountPrice": product.subscription?.introductoryOffer?.price,
             "discountCurrencyPrice": product.discountCurrencyPrice,
             "discountRate": product.discountRate,
             "trialPeriodValue": product.trialPeriodValue,
