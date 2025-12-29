@@ -84,8 +84,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     return QsPurchaseResult(
       status: QsPurchaseStatus.error,
       errorMessage: "未知错误",
-      originalPurchaseId: null,
+      productID: null,
+      transactionID: null,
+      originalTransactionID: null,
+      subscriptionDate: null,
       originalSubscriptionDate: null,
+      price: null,
     );
   }
 
@@ -105,8 +109,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     return QsPurchaseResult(
       status: QsPurchaseStatus.error,
       errorMessage: "未知错误",
-      originalPurchaseId: null,
+      productID: null,
+      transactionID: null,
+      originalTransactionID: null,
+      subscriptionDate: null,
       originalSubscriptionDate: null,
+      price: null,
     );
   }
 
@@ -126,8 +134,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     return QsPurchaseResult(
       status: QsPurchaseStatus.error,
       errorMessage: "未知错误",
-      originalPurchaseId: null,
+      productID: null,
+      transactionID: null,
+      originalTransactionID: null,
+      subscriptionDate: null,
       originalSubscriptionDate: null,
+      price: null,
     );
   }
 

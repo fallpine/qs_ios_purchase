@@ -2,13 +2,21 @@ class QsPurchaseResult {
   QsPurchaseResult({
     required this.status,
     required this.errorMessage,
-    required this.originalPurchaseId,
+    required this.productID,
+    required this.transactionID,
+    required this.originalTransactionID,
+    required this.subscriptionDate,
     required this.originalSubscriptionDate,
+    required this.price,
   });
   late final QsPurchaseStatus? status;
   late final String? errorMessage;
-  late final String? originalPurchaseId;
+  late final String? productID;
+  late final String? transactionID;
+  late final String? originalTransactionID;
+  late final String? subscriptionDate;
   late final String? originalSubscriptionDate;
+  late final String? price;
 
   QsPurchaseResult.fromJson(Map<String, dynamic> json) {
     try {
@@ -20,16 +28,24 @@ class QsPurchaseResult {
     }
 
     errorMessage = json['errorMessage'];
-    originalPurchaseId = json['originalPurchaseId'];
+    productID = json['productID'];
+    transactionID = json['transactionID'];
+    originalTransactionID = json['originalTransactionID'];
+    subscriptionDate = json['subscriptionDate'];
     originalSubscriptionDate = json['originalSubscriptionDate'];
+    price = json['price'];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['status'] = status?.name;
     data['errorMessage'] = errorMessage;
-    data['originalPurchaseId'] = originalPurchaseId;
+    data['productID'] = productID;
+    data['transactionID'] = transactionID;
+    data['originalTransactionID'] = originalTransactionID;
+    data['subscriptionDate'] = subscriptionDate;
     data['originalSubscriptionDate'] = originalSubscriptionDate;
+    data['price'] = price;
     return data;
   }
 }

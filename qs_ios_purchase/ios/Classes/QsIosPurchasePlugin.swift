@@ -5,7 +5,8 @@ import UIKit
 
 public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "qs_ios_purchase", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(
+      name: "qs_ios_purchase", binaryMessenger: registrar.messenger())
 
     // 注册流
     QSVipStream.register(messenger: registrar.messenger())
@@ -27,9 +28,12 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     case "getProducts":
       let arguments = call.arguments as? [String: Any]
       if let productIds = arguments?["productIds"] as? [String] {
-        getProducts(productIds: productIds, onSuccess: { products in
-          result(products)
-        }) { error in
+        getProducts(
+          productIds: productIds,
+          onSuccess: { products in
+            result(products)
+          }
+        ) { error in
           result(error)
         }
       }
@@ -37,9 +41,11 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     case "requestPurchase":
       let arguments = call.arguments as? [String: Any]
       if let productId = arguments?["productId"] as? String {
-        requestPurchase(productId: productId, onCompletion: { dict in
-          result(dict)
-        })
+        requestPurchase(
+          productId: productId,
+          onCompletion: { dict in
+            result(dict)
+          })
       }
 
     case "restorePurchase":
@@ -76,50 +82,62 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   }
 
   /// 获取商品
-  private func getProducts(productIds: [String],
-                           onSuccess: @escaping ([[String: Any]]) -> Void,
-                           onFailure: @escaping (String) -> Void)
-  {
+  private func getProducts(
+    productIds: [String],
+    onSuccess: @escaping ([[String: Any]]) -> Void,
+    onFailure: @escaping (String) -> Void
+  ) {
     Task {
-      await QSPurchase.shared.getProducts(productIds: productIds, onSuccess: { products in
-        var dictArr = [[String: Any]]()
-        for product in products {
-          let dict = [
-            "id": product.id,
-            "productType": getProductTypeValue(type: product.type),
-            "price": product.price,
-            "currencyPrice": product.currencyPrice,
-            "discountPrice": product.subscription?.introductoryOffer?.price,
-            "discountCurrencyPrice": product.discountCurrencyPrice,
-            "discountRate": product.discountRate,
-            "trialPeriodValue": product.trialPeriodValue,
-            "trialPeriodUnit": getPeriodUnitValue(unit: product.trialPeriodUnit) ?? "",
-            "subscriptionPeriodValue": product.subscriptionPeriodValue,
-            "subscriptionPeriodUnit": getPeriodUnitValue(unit: product.subscriptionPeriodUnit) ?? "",
-            "languageCode": product.priceFormatStyle.locale.languageCode,
-            "regionCode": product.priceFormatStyle.locale.regionCode,
-            "weekAveragePrice": product.weekAveragePrice,
-          ]
-          dictArr.append(dict)
+      await QSPurchase.shared.getProducts(
+        productIds: productIds,
+        onSuccess: { products in
+          var dictArr = [[String: Any]]()
+          for product in products {
+            let dict = [
+              "id": product.id,
+              "productType": getProductTypeValue(type: product.type),
+              "price": product.price,
+              "currencyPrice": product.currencyPrice,
+              "discountPrice": product.subscription?.introductoryOffer?.price,
+              "discountCurrencyPrice": product.discountCurrencyPrice,
+              "discountRate": product.discountRate,
+              "trialPeriodValue": product.trialPeriodValue,
+              "trialPeriodUnit": getPeriodUnitValue(unit: product.trialPeriodUnit) ?? "",
+              "subscriptionPeriodValue": product.subscriptionPeriodValue,
+              "subscriptionPeriodUnit": getPeriodUnitValue(unit: product.subscriptionPeriodUnit)
+                ?? "",
+              "languageCode": product.priceFormatStyle.locale.languageCode,
+              "regionCode": product.priceFormatStyle.locale.regionCode,
+              "weekAveragePrice": product.weekAveragePrice,
+            ]
+            dictArr.append(dict)
+          }
+          onSuccess(dictArr)
         }
-        onSuccess(dictArr)
-      }) { error in
+      ) { error in
         onFailure(error)
       }
     }
   }
 
   /// 购买产品
-  private func requestPurchase(productId: String,
-                               onCompletion: @escaping (([String: Any]) -> Void))
-  {
+  private func requestPurchase(
+    productId: String,
+    onCompletion: @escaping (([String: Any]) -> Void)
+  ) {
     Task {
       if let product = await QSPurchase.shared.getProduct(by: productId) {
-        await QSPurchase.shared.requestPurchase(product: product) { purchaseId, subscriptionDate in
+        await QSPurchase.shared.requestPurchase(product: product) {
+          productID, transactionID, originalTransactionID, subscriptionDate,
+          originalSubscriptionDate, price, tradedProductIDs, isCheckedTransaction in
           let dict = [
             "status": "success",
-            "originalPurchaseId": purchaseId,
-            "originalSubscriptionDate": subscriptionDate,
+            "productID": productID,
+            "transactionID": transactionID,
+            "originalTransactionID": originalTransactionID,
+            "subscriptionDate": subscriptionDate,
+            "originalSubscriptionDate": originalSubscriptionDate,
+            "price": price,
           ]
           onCompletion(dict)
         } onFailure: { error in
@@ -130,7 +148,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           onCompletion(dict)
         } onCancel: {
           let dict = [
-            "status": "cancel",
+            "status": "cancel"
           ]
           onCompletion(dict)
         }
@@ -149,7 +167,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await QSPurchase.shared.restorePurchase {
         let dict = [
-          "status": "success",
+          "status": "success"
         ]
         onCompletion(dict)
       } onFailure: { error in
@@ -165,18 +183,20 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   /// 校验交易订单
   public func checkTransactions(onCompletion: @escaping ([String: Any]) -> Void) {
     Task {
-      await QSPurchase.shared.checkTransactions(onSuccess: {
-        let dict = [
-          "status": "success",
-        ]
-        onCompletion(dict)
-      }, onFailure: {
-        let dict = [
-          "status": "error",
-          "errorMessage": "没有有效的商品",
-        ]
-        onCompletion(dict)
-      })
+      await QSPurchase.shared.checkTransactions(
+        onSuccess: {
+          let dict = [
+            "status": "success"
+          ]
+          onCompletion(dict)
+        },
+        onFailure: {
+          let dict = [
+            "status": "error",
+            "errorMessage": "没有有效的商品",
+          ]
+          onCompletion(dict)
+        })
     }
   }
 
