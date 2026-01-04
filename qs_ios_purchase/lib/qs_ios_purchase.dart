@@ -8,11 +8,13 @@ class QsIosPurchase {
   /// 初始化
   static Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrialChange,
+    required VoidCallback onCancelFreeTrial,
+    required VoidCallback onCancelAutoRenew,
   }) {
     return QsIosPurchasePlatform.instance.initialize(
       onVipChange: onVipChange,
-      onCancelFreeTrialChange: onCancelFreeTrialChange,
+      onCancelFreeTrial: onCancelFreeTrial,
+      onCancelAutoRenew: onCancelAutoRenew,
     );
   }
 
@@ -36,7 +38,8 @@ class QsIosPurchase {
     return await QsIosPurchasePlatform.instance.checkTransactions();
   }
 
-  /// Property
-  static String get cancelProductId =>
-      QsIosPurchasePlatform.instance.cancelProductId;
+  /// 是否有历史交易记录
+  static Future<bool> hasHistoryTransaction() async {
+    return await QsIosPurchasePlatform.instance.hasHistoryTransaction();
+  }
 }

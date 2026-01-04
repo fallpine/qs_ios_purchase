@@ -29,7 +29,8 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   /// 初始化
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrialChange,
+    required VoidCallback onCancelFreeTrial,
+    required VoidCallback onCancelAutoRenew,
   }) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
@@ -54,6 +55,10 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
     throw UnimplementedError('checkTransactions() has not been implemented.');
   }
 
-  /// Property
-  String cancelProductId = "";
+  /// 校验交易订单
+  Future<bool> hasHistoryTransaction() async {
+    throw UnimplementedError(
+      'hasHistoryTransaction() has not been implemented.',
+    );
+  }
 }

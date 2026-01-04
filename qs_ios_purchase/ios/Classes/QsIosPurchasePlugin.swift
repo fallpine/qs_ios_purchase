@@ -6,12 +6,13 @@ import UIKit
 public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
-      name: "qs_ios_purchase", binaryMessenger: registrar.messenger())
+      name: "qs_ios_purchase", binaryMessenger: registrar.messenger()
+    )
 
     // 注册流
     QSVipStream.register(messenger: registrar.messenger())
     QSCancelFreeTrialStream.register(messenger: registrar.messenger())
-    QSCancelProductIdStream.register(messenger: registrar.messenger())
+    QSCancelAutoRenewStream.register(messenger: registrar.messenger())
 
     let instance = QsIosPurchasePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -45,7 +46,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           productId: productId,
           onCompletion: { dict in
             result(dict)
-          })
+          }
+        )
       }
 
     case "restorePurchase":
@@ -56,6 +58,13 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     case "checkTransactions":
       checkTransactions { dict in
         result(dict)
+      }
+
+    case "hasHistoryTransaction":
+      Task {
+        await MainActor.run {
+          result(QSPurchase.shared.hasHistoryTransaction)
+        }
       }
 
     default:
@@ -71,11 +80,14 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await MainActor.run {
         QSPurchase.shared.vipAction = { isVip in
           QSVipStream.vipStream?(isVip)
-          QSCancelProductIdStream.cancelProductIdStream?(QSPurchase.shared.cancelProductId)
         }
 
-        QSPurchase.shared.cancelFreeTrialAction = {
+        QSPurchase.shared.cancelFreeTrialAction = { _, _ in
           QSCancelFreeTrialStream.cancelFreeTrialStream?(true)
+        }
+
+        QSPurchase.shared.cancelAutoRenewAction = { _, _ in
+          QSCancelAutoRenewStream.cancelAutoRenewStream?(true)
         }
       }
     }
@@ -128,8 +140,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       if let product = await QSPurchase.shared.getProduct(by: productId) {
         await QSPurchase.shared.requestPurchase(product: product) {
-          productID, transactionID, originalTransactionID, subscriptionDate,
-          originalSubscriptionDate, price, tradedProductIDs, isCheckedTransaction in
+          productID, transactionID, originalTransactionID, subscriptionDate, originalSubscriptionDate, price in
           let dict = [
             "status": "success",
             "productID": productID,
@@ -148,7 +159,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           onCompletion(dict)
         } onCancel: {
           let dict = [
-            "status": "cancel"
+            "status": "cancel",
           ]
           onCompletion(dict)
         }
@@ -167,7 +178,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await QSPurchase.shared.restorePurchase {
         let dict = [
-          "status": "success"
+          "status": "success",
         ]
         onCompletion(dict)
       } onFailure: { error in
@@ -186,7 +197,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await QSPurchase.shared.checkTransactions(
         onSuccess: {
           let dict = [
-            "status": "success"
+            "status": "success",
           ]
           onCompletion(dict)
         },
@@ -196,7 +207,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
             "errorMessage": "没有有效的商品",
           ]
           onCompletion(dict)
-        })
+        }
+      )
     }
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 
-class QsCancelProductIdStream {
+class QsCancelAutoRenewStream {
   static const EventChannel _channel = EventChannel(
-    "qs_ios_purchase/cancel_product_id",
+    "qs_ios_purchase/cancel_auto_renew",
   );
-  static Stream<dynamic> get cancelProductIdStream =>
+  static Stream<dynamic> get cancelAutoRenewStream =>
       _channel.receiveBroadcastStream();
 }

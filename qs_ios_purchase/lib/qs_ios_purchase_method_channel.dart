@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:qs_ios_purchase/qs_cancel_auto_renew_stream.dart';
 import 'package:qs_ios_purchase/qs_cancel_free_trial_stream.dart';
-import 'package:qs_ios_purchase/qs_cancel_product_id_stream.dart';
 import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 import 'package:qs_ios_purchase/qs_vip_stream.dart';
@@ -18,7 +18,8 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
   @override
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrialChange,
+    required VoidCallback onCancelFreeTrial,
+    required VoidCallback onCancelAutoRenew,
   }) async {
     QsVipStream.vipStream.listen((event) {
       if (event is bool) {
@@ -28,13 +29,13 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
 
     QsCancelFreeTrialStream.cancelFreeTrialStream.listen((event) {
       if (event is bool) {
-        onCancelFreeTrialChange();
+        onCancelFreeTrial();
       }
     });
 
-    QsCancelProductIdStream.cancelProductIdStream.listen((event) {
-      if (event is String) {
-        cancelProductId = event;
+    QsCancelAutoRenewStream.cancelAutoRenewStream.listen((event) {
+      if (event is bool) {
+        onCancelAutoRenew();
       }
     });
 
@@ -154,6 +155,19 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     } on PlatformException catch (e) {
       return "Failed to invoke: '${e.message}'.";
     }
+  }
+
+  /// 校验交易订单
+  @override
+  Future<bool> hasHistoryTransaction() async {
+    var result = await _invokeNativeMethod("hasHistoryTransaction");
+    if (result != null) {
+      if (result is bool) {
+        return result;
+      }
+    }
+
+    return false;
   }
 
   /// 将 Map<Object?, Object?> 转换为 Map<String, dynamic>

@@ -17,7 +17,8 @@ class MockQsIosPurchasePlatform
   @override
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrialChange,
+    required VoidCallback onCancelFreeTrial,
+    required VoidCallback onCancelAutoRenew,
   }) {
     // TODO: implement initialize
     throw UnimplementedError();
@@ -42,7 +43,10 @@ class MockQsIosPurchasePlatform
   }
 
   @override
-  String cancelProductId = "";
+  Future<bool> hasHistoryTransaction() {
+    // TODO: implement hasHistoryTransaction
+    throw UnimplementedError();
+  }
 }
 
 void main() {
