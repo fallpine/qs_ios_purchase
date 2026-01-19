@@ -121,6 +121,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
               "languageCode": product.priceFormatStyle.locale.languageCode,
               "regionCode": product.priceFormatStyle.locale.regionCode,
               "weekAveragePrice": product.weekAveragePrice,
+              "paymentMode": getPaymentModeValue(mode: product.subscription?.introductoryOffer?.paymentMode) ?? "",
             ]
             dictArr.append(dict)
           }
@@ -240,6 +241,23 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         return "month"
       case .year:
         return "year"
+      @unknown default:
+        return nil
+      }
+    }
+    return nil
+  }
+
+  /// 获取支付模式名
+  private func getPaymentModeValue(mode: Product.SubscriptionOffer.PaymentMode?) -> String? {
+    if let mode = mode {
+      switch mode {
+      case .payAsYouGo:
+        return "payAsYouGo"
+      case .payUpFront:
+        return "payUpFront"
+      case .freeTrial:
+        return "freeTrial"
       @unknown default:
         return nil
       }

@@ -14,6 +14,7 @@ class QsProductDetail {
     required this.languageCode,
     required this.regionCode,
     required this.weekAveragePrice,
+    required this.paymentMode,
   });
   late final String id;
   late final QsProductType? productType;
@@ -29,6 +30,7 @@ class QsProductDetail {
   late final String? languageCode;
   late final String? regionCode;
   late final String? weekAveragePrice;
+  late final QsPaymentMode? paymentMode;
 
   QsProductDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -67,6 +69,14 @@ class QsProductDetail {
     } catch (_) {
       subscriptionPeriodUnit = null;
     }
+
+    try {
+      paymentMode = QsPaymentMode.values.firstWhere(
+        (element) => element.name == json['paymentMode'],
+      );
+    } catch (_) {
+      paymentMode = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +95,7 @@ class QsProductDetail {
     data['languageCode'] = languageCode;
     data['regionCode'] = regionCode;
     data['weekAveragePrice'] = weekAveragePrice;
+    data['paymentMode'] = paymentMode?.name;
     return data;
   }
 }
@@ -92,3 +103,5 @@ class QsProductDetail {
 enum QsProductType { consumable, nonConsumable, nonRenewable, autoRenewable }
 
 enum QsPeriodUnit { day, week, month, year }
+
+enum QsPaymentMode { payAsYouGo, payUpFront, freeTrial }
