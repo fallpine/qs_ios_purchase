@@ -60,10 +60,10 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         result(dict)
       }
 
-    case "hasHistoryTransaction":
+    case "historyTransactionCount":
       Task {
         await MainActor.run {
-          result(QSPurchase.shared.hasHistoryTransaction)
+          result(QSPurchase.shared.transactionsCount)
         }
       }
 
@@ -258,7 +258,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         return "payUpFront"
       case .freeTrial:
         return "freeTrial"
-      @unknown default:
+      default:
         return nil
       }
     }

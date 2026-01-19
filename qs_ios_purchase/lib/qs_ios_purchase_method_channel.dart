@@ -159,15 +159,15 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
 
   /// 校验交易订单
   @override
-  Future<bool> hasHistoryTransaction() async {
-    var result = await _invokeNativeMethod("hasHistoryTransaction");
+  Future<int> historyTransactionCount() async {
+    var result = await _invokeNativeMethod("historyTransactionCount");
     if (result != null) {
-      if (result is bool) {
+      if (result is int) {
         return result;
       }
     }
 
-    return false;
+    return 0;
   }
 
   /// 将 Map<Object?, Object?> 转换为 Map<String, dynamic>

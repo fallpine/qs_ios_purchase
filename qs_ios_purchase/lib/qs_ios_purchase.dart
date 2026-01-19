@@ -39,7 +39,7 @@ class QsIosPurchase {
   }
 
   /// 是否有历史交易记录
-  static Future<bool> hasHistoryTransaction() async {
-    return await QsIosPurchasePlatform.instance.hasHistoryTransaction();
+  static Future<int> historyTransactionCount() async {
+    return await QsIosPurchasePlatform.instance.historyTransactionCount();
   }
 }

@@ -43,8 +43,8 @@ class MockQsIosPurchasePlatform
   }
 
   @override
-  Future<bool> hasHistoryTransaction() {
-    // TODO: implement hasHistoryTransaction
+  Future<int> historyTransactionCount() {
+    // TODO: implement historyTransactionCount
     throw UnimplementedError();
   }
 }

@@ -56,9 +56,9 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   }
 
   /// 校验交易订单
-  Future<bool> hasHistoryTransaction() async {
+  Future<int> historyTransactionCount() async {
     throw UnimplementedError(
-      'hasHistoryTransaction() has not been implemented.',
+      'historyTransactionCount() has not been implemented.',
     );
   }
 }
