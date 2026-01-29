@@ -67,6 +67,24 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         }
       }
 
+    case "handleCancelAutoRenewFailure":
+      let arguments = call.arguments as? [String: Any]
+      if let id = arguments?["id"] as? String {
+        Task {
+          await QSPurchase.shared.handleCancelAutoRenewFailure(id: id)
+          result(nil)
+        }
+      }
+
+    case "handleCancelFreeTrialFailure":
+      let arguments = call.arguments as? [String: Any]
+      if let id = arguments?["id"] as? String {
+        Task {
+          await QSPurchase.shared.handleCancelFreeTrialFailure(id: id)
+          result(nil)
+        }
+      }
+
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -82,12 +100,12 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           QSVipStream.vipStream?(isVip)
         }
 
-        QSPurchase.shared.cancelFreeTrialAction = { _, _ in
-          QSCancelFreeTrialStream.cancelFreeTrialStream?(true)
+        QSPurchase.shared.cancelFreeTrialAction = { _, id in
+          QSCancelFreeTrialStream.cancelFreeTrialStream?(id)
         }
 
-        QSPurchase.shared.cancelAutoRenewAction = { _, _ in
-          QSCancelAutoRenewStream.cancelAutoRenewStream?(true)
+        QSPurchase.shared.cancelAutoRenewAction = { _, id in
+          QSCancelAutoRenewStream.cancelAutoRenewStream?(id)
         }
       }
     }
@@ -121,7 +139,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
               "languageCode": product.priceFormatStyle.locale.languageCode,
               "regionCode": product.priceFormatStyle.locale.regionCode,
               "weekAveragePrice": product.weekAveragePrice,
-              "paymentMode": getPaymentModeValue(mode: product.subscription?.introductoryOffer?.paymentMode) ?? "",
+              "paymentMode": getPaymentModeValue(
+                mode: product.subscription?.introductoryOffer?.paymentMode) ?? "",
             ]
             dictArr.append(dict)
           }
@@ -141,7 +160,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       if let product = await QSPurchase.shared.getProduct(by: productId) {
         await QSPurchase.shared.requestPurchase(product: product) {
-          productID, transactionID, originalTransactionID, subscriptionDate, originalSubscriptionDate, price in
+          productID, transactionID, originalTransactionID, subscriptionDate,
+          originalSubscriptionDate, price in
           let dict = [
             "status": "success",
             "productID": productID,
@@ -160,7 +180,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           onCompletion(dict)
         } onCancel: {
           let dict = [
-            "status": "cancel",
+            "status": "cancel"
           ]
           onCompletion(dict)
         }
@@ -179,7 +199,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await QSPurchase.shared.restorePurchase {
         let dict = [
-          "status": "success",
+          "status": "success"
         ]
         onCompletion(dict)
       } onFailure: { error in
@@ -198,7 +218,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await QSPurchase.shared.checkTransactions(
         onSuccess: {
           let dict = [
-            "status": "success",
+            "status": "success"
           ]
           onCompletion(dict)
         },

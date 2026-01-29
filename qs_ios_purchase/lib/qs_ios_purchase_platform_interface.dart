@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
@@ -29,8 +28,8 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   /// 初始化
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrial,
-    required VoidCallback onCancelAutoRenew,
+    required Function(String transactionId) onCancelFreeTrial,
+    required Function(String transactionId) onCancelAutoRenew,
   }) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
@@ -59,6 +58,20 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   Future<int> historyTransactionCount() async {
     throw UnimplementedError(
       'historyTransactionCount() has not been implemented.',
+    );
+  }
+
+  /// 取消续订处理失败
+  Future<void> handleCancelAutoRenewFailure({required String id}) {
+    throw UnimplementedError(
+      'handleCancelAutoRenewFailure() has not been implemented.',
+    );
+  }
+
+  /// 取消试订处理失败
+  Future<void> handleCancelFreeTrialFailure({required String id}) {
+    throw UnimplementedError(
+      'handleCancelFreeTrialFailure() has not been implemented.',
     );
   }
 }

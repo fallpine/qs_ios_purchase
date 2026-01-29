@@ -18,8 +18,8 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
   @override
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrial,
-    required VoidCallback onCancelAutoRenew,
+    required Function(String transactionId) onCancelFreeTrial,
+    required Function(String transactionId) onCancelAutoRenew,
   }) async {
     QsVipStream.vipStream.listen((event) {
       if (event is bool) {
@@ -28,14 +28,14 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     });
 
     QsCancelFreeTrialStream.cancelFreeTrialStream.listen((event) {
-      if (event is bool) {
-        onCancelFreeTrial();
+      if (event is String) {
+        onCancelFreeTrial(event);
       }
     });
 
     QsCancelAutoRenewStream.cancelAutoRenewStream.listen((event) {
-      if (event is bool) {
-        onCancelAutoRenew();
+      if (event is String) {
+        onCancelAutoRenew(event);
       }
     });
 
@@ -168,6 +168,18 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     }
 
     return 0;
+  }
+
+  /// 取消续订处理失败
+  @override
+  Future<void> handleCancelAutoRenewFailure({required String id}) async {
+    await _invokeNativeMethod("handleCancelAutoRenewFailure", {"id": id});
+  }
+
+  /// 取消试订处理失败
+  @override
+  Future<void> handleCancelFreeTrialFailure({required String id}) async {
+    await _invokeNativeMethod("handleCancelFreeTrialFailure", {"id": id});
   }
 
   /// 将 Map<Object?, Object?> 转换为 Map<String, dynamic>

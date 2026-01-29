@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
 import 'qs_ios_purchase_platform_interface.dart';
@@ -8,8 +7,8 @@ class QsIosPurchase {
   /// 初始化
   static Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrial,
-    required VoidCallback onCancelAutoRenew,
+    required Function(String transactionId) onCancelFreeTrial,
+    required Function(String transactionId) onCancelAutoRenew,
   }) {
     return QsIosPurchasePlatform.instance.initialize(
       onVipChange: onVipChange,
@@ -41,5 +40,15 @@ class QsIosPurchase {
   /// 是否有历史交易记录
   static Future<int> historyTransactionCount() async {
     return await QsIosPurchasePlatform.instance.historyTransactionCount();
+  }
+
+  /// 取消续订处理失败
+  static Future<void> handleCancelAutoRenewFailure({required String id}) {
+    return QsIosPurchasePlatform.instance.handleCancelAutoRenewFailure(id: id);
+  }
+
+  /// 取消试订处理失败
+  static Future<void> handleCancelFreeTrialFailure({required String id}) {
+    return QsIosPurchasePlatform.instance.handleCancelFreeTrialFailure(id: id);
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qs_ios_purchase/qs_ios_purchase_platform_interface.dart';
 import 'package:qs_ios_purchase/qs_ios_purchase_method_channel.dart';
@@ -17,8 +16,8 @@ class MockQsIosPurchasePlatform
   @override
   Future<void> initialize({
     required Function(bool isVip) onVipChange,
-    required VoidCallback onCancelFreeTrial,
-    required VoidCallback onCancelAutoRenew,
+    required Function(String transactionId) onCancelFreeTrial,
+    required Function(String transactionId) onCancelAutoRenew,
   }) {
     // TODO: implement initialize
     throw UnimplementedError();
@@ -45,6 +44,18 @@ class MockQsIosPurchasePlatform
   @override
   Future<int> historyTransactionCount() {
     // TODO: implement historyTransactionCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleCancelAutoRenewFailure({required String id}) {
+    // TODO: implement handleCancelAutoRenewFailure
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleCancelFreeTrialFailure({required String id}) {
+    // TODO: implement handleCancelFreeTrialFailure
     throw UnimplementedError();
   }
 }
