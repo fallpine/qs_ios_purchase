@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'qs_ios_purchase'
-  s.version          = '0.0.1'
+  s.version          = '1.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
 A new Flutter plugin project.
@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'QSInAppPurchase'
+  s.dependency 'QSInAppPurchase', '1.2.5'
   s.platform = :ios, '15.0'
 
   # Flutter.framework does not contain a i386 slice.

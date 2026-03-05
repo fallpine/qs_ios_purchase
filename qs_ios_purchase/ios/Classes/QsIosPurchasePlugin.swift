@@ -63,7 +63,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     case "historyTransactionCount":
       Task {
         await MainActor.run {
-          result(QSPurchase.shared.transactionsCount)
+          result(QSPurchase.shared.transactionIds.count)
         }
       }
 
@@ -161,7 +161,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       if let product = await QSPurchase.shared.getProduct(by: productId) {
         await QSPurchase.shared.requestPurchase(product: product) {
           productID, transactionID, originalTransactionID, subscriptionDate,
-          originalSubscriptionDate, price in
+            originalSubscriptionDate, price in
           let dict = [
             "status": "success",
             "productID": productID,
@@ -180,7 +180,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           onCompletion(dict)
         } onCancel: {
           let dict = [
-            "status": "cancel"
+            "status": "cancel",
           ]
           onCompletion(dict)
         }
@@ -199,7 +199,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await QSPurchase.shared.restorePurchase {
         let dict = [
-          "status": "success"
+          "status": "success",
         ]
         onCompletion(dict)
       } onFailure: { error in
@@ -218,7 +218,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await QSPurchase.shared.checkTransactions(
         onSuccess: {
           let dict = [
-            "status": "success"
+            "status": "success",
           ]
           onCompletion(dict)
         },
