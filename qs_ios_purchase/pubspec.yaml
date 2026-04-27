@@ -1,6 +1,6 @@
 name: qs_ios_purchase
 description: "一个iOS Storekit2内购插件"
-version: 1.0.1
+version: 1.0.2
 homepage: "https://github.com/fallpine/qs_ios_purchase"
 
 environment:
@@ -36,7 +36,6 @@ flutter:
     platforms:
       ios:
         pluginClass: QsIosPurchasePlugin
-
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
