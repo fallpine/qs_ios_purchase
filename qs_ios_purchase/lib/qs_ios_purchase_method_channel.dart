@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_cancel_auto_renew_stream.dart';
@@ -14,6 +16,10 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('qs_ios_purchase');
 
+  StreamSubscription<dynamic>? _vipSubscription;
+  StreamSubscription<dynamic>? _cancelFreeTrialSubscription;
+  StreamSubscription<dynamic>? _cancelAutoRenewSubscription;
+
   /// 初始化
   @override
   Future<void> initialize({
@@ -21,50 +27,57 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
   }) async {
-    QsVipStream.vipStream.listen((event) {
+    await _vipSubscription?.cancel();
+    await _cancelFreeTrialSubscription?.cancel();
+    await _cancelAutoRenewSubscription?.cancel();
+
+    _vipSubscription = QsVipStream.vipStream.listen((event) {
       if (event is bool) {
         onVipChange(event);
       }
     });
 
-    QsCancelFreeTrialStream.cancelFreeTrialStream.listen((event) {
-      if (event is String) {
-        onCancelFreeTrial(event);
-      }
-    });
+    _cancelFreeTrialSubscription = QsCancelFreeTrialStream.cancelFreeTrialStream
+        .listen((event) {
+          if (event is String) {
+            onCancelFreeTrial(event);
+          }
+        });
 
-    QsCancelAutoRenewStream.cancelAutoRenewStream.listen((event) {
-      if (event is String) {
-        onCancelAutoRenew(event);
-      }
-    });
+    _cancelAutoRenewSubscription = QsCancelAutoRenewStream.cancelAutoRenewStream
+        .listen((event) {
+          if (event is String) {
+            onCancelAutoRenew(event);
+          }
+        });
 
     await _invokeNativeMethod("initialize");
   }
 
   /// 获取商品
   @override
-  Future<dynamic> getProducts({required List<String> productIds}) async {
+  Future<List<QsProductDetail>> getProducts({
+    required List<String> productIds,
+  }) async {
     var result = await _invokeNativeMethod("getProducts", {
       "productIds": productIds,
     });
-    if (result != null) {
-      if (result is List<dynamic>) {
-        final List<QsProductDetail> productList = result
-            .map(
-              (e) => QsProductDetail.fromJson(
-                _convertObjectMapToMapStringDynamic(e as Map<Object?, Object?>),
-              ),
-            )
-            .toList();
-
-        return productList;
-      } else if (result is String) {
-        return result;
-      }
+    if (result is List<dynamic>) {
+      return result
+          .map(
+            (e) => QsProductDetail.fromJson(
+              _convertObjectMapToMapStringDynamic(e as Map<Object?, Object?>),
+            ),
+          )
+          .toList();
+    } else if (result is String) {
+      throw PlatformException(code: 'get_products_failed', message: result);
     }
 
-    return null;
+    throw PlatformException(
+      code: 'invalid_get_products_result',
+      message: 'Invalid getProducts result.',
+    );
   }
 
   /// 请求购买商品
@@ -152,22 +165,22 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     try {
       var result = await methodChannel.invokeMethod(method, arguments);
       return result;
-    } on PlatformException catch (e) {
-      return "Failed to invoke: '${e.message}'.";
+    } on PlatformException {
+      rethrow;
     }
   }
 
   /// 校验交易订单
   @override
-  Future<int> historyTransactionCount() async {
-    var result = await _invokeNativeMethod("historyTransactionCount");
+  Future<bool> hasHistoryTransactions() async {
+    var result = await _invokeNativeMethod("hasHistoryTransactions");
     if (result != null) {
-      if (result is int) {
+      if (result is bool) {
         return result;
       }
     }
 
-    return 0;
+    return false;
   }
 
   /// 取消续订处理失败
@@ -182,7 +195,7 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     await _invokeNativeMethod("handleCancelFreeTrialFailure", {"id": id});
   }
 
-  /// 将 Map<Object?, Object?> 转换为 Map<String, dynamic>
+  /// 将 `Map<Object?, Object?>` 转换为 `Map<String, dynamic>`
   static Map<String, dynamic> _convertObjectMapToMapStringDynamic(
     Map<Object?, Object?> map,
   ) {

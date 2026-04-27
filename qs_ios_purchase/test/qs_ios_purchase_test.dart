@@ -1,15 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:qs_ios_purchase/qs_ios_purchase_platform_interface.dart';
-import 'package:qs_ios_purchase/qs_ios_purchase_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:qs_ios_purchase/qs_ios_purchase_method_channel.dart';
+import 'package:qs_ios_purchase/qs_ios_purchase_platform_interface.dart';
+import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
 class MockQsIosPurchasePlatform
     with MockPlatformInterfaceMixin
     implements QsIosPurchasePlatform {
   @override
-  Future<dynamic> getProducts({required List<String> productIds}) {
-    // TODO: implement getProducts
+  Future<List<QsProductDetail>> getProducts({
+    required List<String> productIds,
+  }) {
     throw UnimplementedError();
   }
 
@@ -19,43 +21,37 @@ class MockQsIosPurchasePlatform
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
   }) {
-    // TODO: implement initialize
     throw UnimplementedError();
   }
 
   @override
   Future<QsPurchaseResult> requestPurchase({required String productId}) {
-    // TODO: implement requestPurchase
     throw UnimplementedError();
   }
 
   @override
   Future<QsPurchaseResult> restorePurchase() {
-    // TODO: implement restorePurchase
     throw UnimplementedError();
   }
 
   @override
   Future<QsPurchaseResult> checkTransactions() {
-    // TODO: implement checkTransactions
     throw UnimplementedError();
   }
 
   @override
-  Future<int> historyTransactionCount() {
-    // TODO: implement historyTransactionCount
-    throw UnimplementedError();
+  Future<bool> hasHistoryTransactions() async {
+    // TODO: implement hasHistoryTransactions
+    return false;
   }
 
   @override
   Future<void> handleCancelAutoRenewFailure({required String id}) {
-    // TODO: implement handleCancelAutoRenewFailure
     throw UnimplementedError();
   }
 
   @override
   Future<void> handleCancelFreeTrialFailure({required String id}) {
-    // TODO: implement handleCancelFreeTrialFailure
     throw UnimplementedError();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
+import 'qs_product_detail.dart';
 import 'qs_ios_purchase_platform_interface.dart';
 
 class QsIosPurchase {
@@ -18,7 +19,9 @@ class QsIosPurchase {
   }
 
   /// 获取商品
-  static Future<dynamic> getProducts({required List<String> productIds}) {
+  static Future<List<QsProductDetail>> getProducts({
+    required List<String> productIds,
+  }) {
     return QsIosPurchasePlatform.instance.getProducts(productIds: productIds);
   }
 
@@ -38,8 +41,8 @@ class QsIosPurchase {
   }
 
   /// 是否有历史交易记录
-  static Future<int> historyTransactionCount() async {
-    return await QsIosPurchasePlatform.instance.historyTransactionCount();
+  static Future<bool> hasHistoryTransactions() async {
+    return await QsIosPurchasePlatform.instance.hasHistoryTransactions();
   }
 
   /// 取消续订处理失败

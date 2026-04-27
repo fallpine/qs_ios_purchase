@@ -9,31 +9,33 @@ import Flutter
 import UIKit
 
 class QSVipStream {
-    // MARK: - Func
+  // MARK: - Func
 
-    /// 获取通道
-    static func register(messenger: FlutterBinaryMessenger?) {
-        guard let messenger = messenger else { return }
+  /// 获取通道
+  static func register(messenger: FlutterBinaryMessenger?) {
+    guard let messenger = messenger else { return }
 
-        let channel = FlutterEventChannel(name: "qs_ios_purchase/vip", binaryMessenger: messenger)
+    let channel = FlutterEventChannel(name: "qs_ios_purchase/vip", binaryMessenger: messenger)
 
-        let streamHandler = QSVipStreamHandler()
-        channel.setStreamHandler(streamHandler)
-    }
+    let streamHandler = QSVipStreamHandler()
+    channel.setStreamHandler(streamHandler)
+  }
 
-    // MARK: - Property
+  // MARK: - Property
 
-    static var vipStream: FlutterEventSink?
+  static var vipStream: FlutterEventSink?
 }
 
-class QSVipStreamHandler: FlutterViewController, FlutterStreamHandler {
-    func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        QSVipStream.vipStream = events
-        return nil
-    }
+class QSVipStreamHandler: NSObject, FlutterStreamHandler {
+  func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink)
+    -> FlutterError?
+  {
+    QSVipStream.vipStream = events
+    return nil
+  }
 
-    func onCancel(withArguments _: Any?) -> FlutterError? {
-        QSVipStream.vipStream = nil
-        return nil
-    }
+  func onCancel(withArguments _: Any?) -> FlutterError? {
+    QSVipStream.vipStream = nil
+    return nil
+  }
 }

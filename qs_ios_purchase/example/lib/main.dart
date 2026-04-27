@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_ios_purchase.dart';
 
@@ -16,46 +14,112 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _qsIosPurchasePlugin = QsIosPurchase();
+  final TextEditingController _productIdsController = TextEditingController();
+  String _message = 'Ready';
+  bool _isVip = false;
 
   @override
-  void initState() {
-    super.initState();
-    initPlatformState();
+  void dispose() {
+    _productIdsController.dispose();
+    super.dispose();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
+  Future<void> _initialize() async {
     try {
-      platformVersion =
-          await _qsIosPurchasePlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      await QsIosPurchase.initialize(
+        onVipChange: (isVip) {
+          if (!mounted) return;
+          setState(() {
+            _isVip = isVip;
+            _message = 'VIP status changed: $isVip';
+          });
+        },
+        onCancelFreeTrial: (transactionId) {
+          if (!mounted) return;
+          setState(() => _message = 'Free trial cancelled: $transactionId');
+        },
+        onCancelAutoRenew: (transactionId) {
+          if (!mounted) return;
+          setState(() => _message = 'Auto renew cancelled: $transactionId');
+        },
+      );
+      if (!mounted) return;
+      setState(() => _message = 'Initialized');
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      setState(() => _message = error.message ?? error.code);
+    }
+  }
+
+  Future<void> _loadProducts() async {
+    final productIds = _productIdsController.text
+        .split(',')
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .toList();
+
+    if (productIds.isEmpty) {
+      setState(() => _message = 'Enter at least one product id');
+      return;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+    try {
+      final products = await QsIosPurchase.getProducts(productIds: productIds);
+      if (!mounted) return;
+      setState(() => _message = 'Loaded ${products.length} product(s)');
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      setState(() => _message = error.message ?? error.code);
+    }
+  }
 
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+  Future<void> _loadHistoryCount() async {
+    try {
+      final count = await QsIosPurchase.hasHistoryTransactions();
+      if (!mounted) return;
+      setState(() => _message = 'History transactions: $count');
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      setState(() => _message = error.message ?? error.code);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        appBar: AppBar(title: const Text('qs_ios_purchase example')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Text('VIP: $_isVip'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _productIdsController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Product IDs',
+                hintText: 'product_a, product_b',
+              ),
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: _initialize,
+              child: const Text('Initialize'),
+            ),
+            const SizedBox(height: 8),
+            FilledButton(
+              onPressed: _loadProducts,
+              child: const Text('Load products'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: _loadHistoryCount,
+              child: const Text('Load history count'),
+            ),
+            const SizedBox(height: 16),
+            Text(_message),
+          ],
         ),
       ),
     );

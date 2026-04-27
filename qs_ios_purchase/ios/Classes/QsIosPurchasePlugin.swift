@@ -25,6 +25,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
 
     case "initialize":
       initialize()
+      result(nil)
 
     case "getProducts":
       let arguments = call.arguments as? [String: Any]
@@ -37,6 +38,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         ) { error in
           result(error)
         }
+      } else {
+        result(invalidArgumentsError(method: call.method))
       }
 
     case "requestPurchase":
@@ -48,6 +51,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
             result(dict)
           }
         )
+      } else {
+        result(invalidArgumentsError(method: call.method))
       }
 
     case "restorePurchase":
@@ -60,10 +65,10 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
         result(dict)
       }
 
-    case "historyTransactionCount":
+    case "hasHistoryTransactions":
       Task {
         await MainActor.run {
-          result(QSPurchase.shared.transactionIds.count)
+          result(QSPurchase.shared.hasHistoryTransactions)
         }
       }
 
@@ -74,6 +79,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           await QSPurchase.shared.handleCancelAutoRenewFailure(id: id)
           result(nil)
         }
+      } else {
+        result(invalidArgumentsError(method: call.method))
       }
 
     case "handleCancelFreeTrialFailure":
@@ -83,6 +90,8 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           await QSPurchase.shared.handleCancelFreeTrialFailure(id: id)
           result(nil)
         }
+      } else {
+        result(invalidArgumentsError(method: call.method))
       }
 
     default:
@@ -91,6 +100,14 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
   }
 
   // MARK: - Func
+
+  private func invalidArgumentsError(method: String) -> FlutterError {
+    FlutterError(
+      code: "invalid_arguments",
+      message: "Invalid arguments for \(method).",
+      details: nil
+    )
+  }
 
   /// 初始化
   private func initialize() {

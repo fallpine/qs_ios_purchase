@@ -10,7 +10,7 @@
 
 ```yaml
 dependencies:
-  qs_ios_purchase: ^1.0.3
+  qs_ios_purchase: ^1.0.4
 ```
 
 如果是本地调试，可以使用路径依赖：
@@ -73,7 +73,7 @@ final products = await QsIosPurchase.getProducts(
 print(products);
 ```
 
-成功时返回 `List<QsProductDetail>`，商品信息包含价格、币种、订阅周期、试用周期、优惠信息等字段。失败时可能返回错误字符串。
+成功时返回 `List<QsProductDetail>`，商品信息包含价格、币种、订阅周期、试用周期、优惠信息等字段。失败时会抛出 `PlatformException`。
 
 ### 3. 发起购买
 

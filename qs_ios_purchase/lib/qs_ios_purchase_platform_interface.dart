@@ -1,4 +1,5 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
 
 import 'qs_ios_purchase_method_channel.dart';
@@ -35,7 +36,9 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   }
 
   /// 获取商品
-  Future<dynamic> getProducts({required List<String> productIds}) {
+  Future<List<QsProductDetail>> getProducts({
+    required List<String> productIds,
+  }) {
     throw UnimplementedError('getProducts() has not been implemented.');
   }
 
@@ -55,9 +58,9 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
   }
 
   /// 校验交易订单
-  Future<int> historyTransactionCount() async {
+  Future<bool> hasHistoryTransactions() async {
     throw UnimplementedError(
-      'historyTransactionCount() has not been implemented.',
+      'hasHistoryTransactions() has not been implemented.',
     );
   }
 
