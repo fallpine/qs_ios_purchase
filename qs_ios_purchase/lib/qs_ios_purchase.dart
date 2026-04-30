@@ -10,11 +10,13 @@ class QsIosPurchase {
     required Function(bool isVip) onVipChange,
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
+    required Function() onCancelFreeTrialEveryTime,
   }) {
     return QsIosPurchasePlatform.instance.initialize(
       onVipChange: onVipChange,
       onCancelFreeTrial: onCancelFreeTrial,
       onCancelAutoRenew: onCancelAutoRenew,
+      onCancelFreeTrialEveryTime: onCancelFreeTrialEveryTime,
     );
   }
 

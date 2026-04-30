@@ -66,11 +66,13 @@ void main() {
         onVipChange: (_) {},
         onCancelFreeTrial: (_) {},
         onCancelAutoRenew: (_) {},
+        onCancelFreeTrialEveryTime: () {},
       );
       await plugin.initialize(
         onVipChange: (_) {},
         onCancelFreeTrial: (_) {},
         onCancelAutoRenew: (_) {},
+        onCancelFreeTrialEveryTime: () {},
       );
 
       expect(calls.map((call) => call.method), ['initialize', 'initialize']);

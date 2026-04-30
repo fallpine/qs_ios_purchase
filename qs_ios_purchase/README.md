@@ -10,7 +10,7 @@
 
 ```yaml
 dependencies:
-  qs_ios_purchase: ^1.0.4
+  qs_ios_purchase: ^1.0.5
 ```
 
 如果是本地调试，可以使用路径依赖：

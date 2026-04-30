@@ -13,6 +13,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     QSVipStream.register(messenger: registrar.messenger())
     QSCancelFreeTrialStream.register(messenger: registrar.messenger())
     QSCancelAutoRenewStream.register(messenger: registrar.messenger())
+    QSCancelFreeTrialEveryTimeStream.register(messenger: registrar.messenger())
 
     let instance = QsIosPurchasePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -123,6 +124,10 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
 
         QSPurchase.shared.cancelAutoRenewAction = { _, id in
           QSCancelAutoRenewStream.cancelAutoRenewStream?(id)
+        }
+
+        QSPurchase.shared.cancelFreeTrialEveryTimeAction = { 
+          QSCancelFreeTrialEveryTimeStream.cancelFreeTrialEveryTimeStream?(nil)
         }
       }
     }

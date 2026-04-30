@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:qs_ios_purchase/qs_cancel_auto_renew_stream.dart';
+import 'package:qs_ios_purchase/qs_cancel_free_trial_every_time_stream.dart';
 import 'package:qs_ios_purchase/qs_cancel_free_trial_stream.dart';
 import 'package:qs_ios_purchase/qs_product_detail.dart';
 import 'package:qs_ios_purchase/qs_purchase_result.dart';
@@ -19,6 +20,7 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
   StreamSubscription<dynamic>? _vipSubscription;
   StreamSubscription<dynamic>? _cancelFreeTrialSubscription;
   StreamSubscription<dynamic>? _cancelAutoRenewSubscription;
+  StreamSubscription<void>? _cancelFreeTrialEveryTimeSubscription;
 
   /// 初始化
   @override
@@ -26,10 +28,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
     required Function(bool isVip) onVipChange,
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
+    required Function() onCancelFreeTrialEveryTime,
   }) async {
     await _vipSubscription?.cancel();
     await _cancelFreeTrialSubscription?.cancel();
     await _cancelAutoRenewSubscription?.cancel();
+    await _cancelFreeTrialEveryTimeSubscription?.cancel();
 
     _vipSubscription = QsVipStream.vipStream.listen((event) {
       if (event is bool) {
@@ -49,6 +53,12 @@ class MethodChannelQsIosPurchase extends QsIosPurchasePlatform {
           if (event is String) {
             onCancelAutoRenew(event);
           }
+        });
+
+    _cancelFreeTrialEveryTimeSubscription = QsCancelFreeTrialEveryTimeStream
+        .cancelFreeTrialEveryTimeStream
+        .listen((event) {
+          onCancelFreeTrialEveryTime();
         });
 
     await _invokeNativeMethod("initialize");

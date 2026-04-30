@@ -31,6 +31,7 @@ abstract class QsIosPurchasePlatform extends PlatformInterface {
     required Function(bool isVip) onVipChange,
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
+    required Function() onCancelFreeTrialEveryTime,
   }) {
     throw UnimplementedError('initialize() has not been implemented.');
   }

@@ -20,6 +20,7 @@ class MockQsIosPurchasePlatform
     required Function(bool isVip) onVipChange,
     required Function(String transactionId) onCancelFreeTrial,
     required Function(String transactionId) onCancelAutoRenew,
+    required Function() onCancelFreeTrialEveryTime,
   }) {
     throw UnimplementedError();
   }
