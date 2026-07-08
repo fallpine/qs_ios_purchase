@@ -126,7 +126,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           QSCancelAutoRenewStream.cancelAutoRenewStream?(id)
         }
 
-        QSPurchase.shared.cancelFreeTrialEveryTimeAction = { 
+        QSPurchase.shared.cancelFreeTrialEveryTimeAction = {
           QSCancelFreeTrialEveryTimeStream.cancelFreeTrialEveryTimeStream?(nil)
         }
       }
@@ -143,30 +143,42 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await QSPurchase.shared.getProducts(
         productIds: productIds,
         onSuccess: { products in
-          var dictArr = [[String: Any]]()
-          for product in products {
-            let dict = [
-              "id": product.id,
-              "productType": getProductTypeValue(type: product.type),
-              "price": product.price,
-              "currencyPrice": product.currencyPrice,
-              "discountPrice": product.subscription?.introductoryOffer?.price,
-              "discountCurrencyPrice": product.discountCurrencyPrice,
-              "discountRate": product.discountRate,
-              "trialPeriodValue": product.trialPeriodValue,
-              "trialPeriodUnit": getPeriodUnitValue(unit: product.trialPeriodUnit) ?? "",
-              "subscriptionPeriodValue": product.subscriptionPeriodValue,
-              "subscriptionPeriodUnit": getPeriodUnitValue(unit: product.subscriptionPeriodUnit)
-                ?? "",
-              "languageCode": product.priceFormatStyle.locale.languageCode,
-              "regionCode": product.priceFormatStyle.locale.regionCode,
-              "weekAveragePrice": product.weekAveragePrice,
-              "paymentMode": getPaymentModeValue(
-                mode: product.subscription?.introductoryOffer?.paymentMode) ?? "",
-            ]
-            dictArr.append(dict)
+          Task {
+            var dictArr = [[String: Any]]()
+
+            for product in products {
+
+              let isEligible =
+                await product.subscription?.isEligibleForIntroOffer ?? false
+
+              let dict: [String: Any] = [
+                "id": product.id,
+                "productType": getProductTypeValue(type: product.type),
+                "price": product.price,
+                "currencyPrice": product.currencyPrice,
+                "discountPrice": product.subscription?.introductoryOffer?.price,
+                "discountCurrencyPrice": product.discountCurrencyPrice,
+                "discountRate": product.discountRate,
+                "trialPeriodValue": product.trialPeriodValue,
+                "trialPeriodUnit": getPeriodUnitValue(unit: product.trialPeriodUnit) ?? "",
+                "subscriptionPeriodValue": product.subscriptionPeriodValue,
+                "subscriptionPeriodUnit": getPeriodUnitValue(unit: product.subscriptionPeriodUnit)
+                  ?? "",
+                "languageCode": product.priceFormatStyle.locale.languageCode,
+                "regionCode": product.priceFormatStyle.locale.regionCode,
+                "weekAveragePrice": product.weekAveragePrice,
+                "paymentMode": getPaymentModeValue(
+                  mode: product.subscription?.introductoryOffer?.paymentMode) ?? "",
+                "isEligibleForIntroOffer": isEligible ? "true" : "false",
+              ]
+
+              dictArr.append(dict)
+            }
+
+            await MainActor.run {
+              onSuccess(dictArr)
+            }
           }
-          onSuccess(dictArr)
         }
       ) { error in
         onFailure(error)
@@ -183,7 +195,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       if let product = await QSPurchase.shared.getProduct(by: productId) {
         await QSPurchase.shared.requestPurchase(product: product) {
           productID, transactionID, originalTransactionID, subscriptionDate,
-            originalSubscriptionDate, price in
+          originalSubscriptionDate, price in
           let dict = [
             "status": "success",
             "productID": productID,
@@ -202,7 +214,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
           onCompletion(dict)
         } onCancel: {
           let dict = [
-            "status": "cancel",
+            "status": "cancel"
           ]
           onCompletion(dict)
         }
@@ -221,7 +233,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
     Task {
       await QSPurchase.shared.restorePurchase {
         let dict = [
-          "status": "success",
+          "status": "success"
         ]
         onCompletion(dict)
       } onFailure: { error in
@@ -240,7 +252,7 @@ public class QsIosPurchasePlugin: NSObject, FlutterPlugin {
       await QSPurchase.shared.checkTransactions(
         onSuccess: {
           let dict = [
-            "status": "success",
+            "status": "success"
           ]
           onCompletion(dict)
         },

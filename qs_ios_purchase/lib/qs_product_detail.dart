@@ -15,6 +15,7 @@ class QsProductDetail {
     required this.regionCode,
     required this.weekAveragePrice,
     required this.paymentMode,
+    required this.isEligibleForIntroOffer, // 是否能享受优惠
   });
   late final String id;
   late final QsProductType? productType;
@@ -31,6 +32,17 @@ class QsProductDetail {
   late final String? regionCode;
   late final String? weekAveragePrice;
   late final QsPaymentMode? paymentMode;
+  late final bool isEligibleForIntroOffer; // 是否能享受优惠
+
+// 是否免费试用
+  bool get isFreeTrial {
+    return paymentMode == QsPaymentMode.freeTrial && isEligibleForIntroOffer;
+  }
+
+  // 是否折扣
+  bool get isDiscount {
+    return discountPrice != null && isEligibleForIntroOffer;
+  }
 
   QsProductDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -51,6 +63,8 @@ class QsProductDetail {
     languageCode = json['languageCode'];
     regionCode = json['regionCode'];
     weekAveragePrice = json['weekAveragePrice'];
+    isEligibleForIntroOffer =
+        json['isEligibleForIntroOffer'] == 'true'; // 是否能享受优惠
 
     try {
       trialPeriodUnit = QsPeriodUnit.values.firstWhere(
@@ -96,6 +110,9 @@ class QsProductDetail {
     data['regionCode'] = regionCode;
     data['weekAveragePrice'] = weekAveragePrice;
     data['paymentMode'] = paymentMode?.name;
+    data['isEligibleForIntroOffer'] = isEligibleForIntroOffer
+        ? 'true'
+        : 'false'; // 是否能享受优惠
     return data;
   }
 }
